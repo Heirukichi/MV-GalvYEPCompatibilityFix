@@ -6,7 +6,7 @@
  * ---------------------------------------------------------------------------
  * @version 0.1.0
  * @author Heirukichi
- * - Last update: 12-20-2019 [MM-Dd-YYYY]
+ * - Last update: 12-21-2019 [MM-DD-YYYY]
  * ---------------------------------------------------------------------------
  * REQUIRED FILES
  * ---------------------------------------------------------------------------
@@ -25,11 +25,91 @@ var HRK = HRK || {};
 HRK.GYCFix = HRK.GYCFix || {};
 HRK.GYCFix.Window_Message = HRK.GYCFix.Window_Message || {};
 /*:
- * @plugindesc v.0.1.0 - Last update: 12-20-2019 [MM-DD-YYYY] by Heirukichi
+ * @plugindesc
+ * Version 0.1.0
+ * - Last update: 12-21-2019 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
  *
+ * @param Message Window Settings
+ * @default
  *
+ * @param Text-Based Height
+ * @parent Message Window Settings
+ * @type boolean
+ * @on YES
+ * @off NO
+ * @desc
+ * Calculate messages height based on text height?
+ * If set to false, Dynamic Window Height is ignored.
+ * @default true
+ *
+ * @param Dynamic Window Height
+ * @parent Message Window Settings
+ * @type boolean
+ * @on YES
+ * @off NO
+ * @desc
+ * Set dynamic window height?
+ * If set to true, other ways to adjust messages height are ignored.
+ * @default true
+ *
+ * @help
+ * ============================================================================
+ * HEIRUKICHI'S COMPATIBILITY FIX FOR GALV MESSAGE STYLES AND YEP MESSAGE CORE
+ * ============================================================================
+ * DESCRIPTION
+ * ----------------------------------------------------------------------------
+ * This plugin fixes compatibility issues between Galv's Message Styles and YEP
+ * Message Core. The main issue addressed by this plugin is the one concerning
+ * word wrapping.
+ *
+ * ----------------------------------------------------------------------------
+ * REQUIREMENTS
+ * ----------------------------------------------------------------------------
+ * This plugin is meant as a fix for compatibility issues between YEP Message
+ * Core and Galv Message Styles, as such, both those plugins are required to
+ * use this plugin. Without them, this plugin is useless (if not harmful).
+ *
+ * ----------------------------------------------------------------------------
+ * INSTRUCTIONS
+ * ----------------------------------------------------------------------------
+ * To use this plugin install it in your project and be sure to place it right
+ * below Galv Message Styles plugin, which, on the other hand, should be placed
+ * right after YEP Message Core. This guarantees that no other plugin interacts
+ * with this fix.
+ *
+ * If you are using other plugins that require one of the two aforementioned
+ * ones to work, you can place them after this one.
+ *
+ * ----------------------------------------------------------------------------
+ * TERMS OF USE
+ * ----------------------------------------------------------------------------
+ * This plugin is under the GNU General Public License 3.0, this means that:
+ *
+ * - You are free to use this script for both commercial and non-commercial
+ *   projects as long as proper credit is given to me (Heirukichi) and a link
+ *   to my webside is provided (https://heirukichiworks.wordpress.com);
+ * - You can modify this script as long as the modified script is distributed
+ *   under the same license as the original and a link to the original is also
+ *   provided.
+ *
+ * You can review the complete license here:
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * IMPORTANT NOTICE
+ * If you want to distribute this plugin, instead of pasting the whole code,
+ * provide a link to my website instead.
+ *
+ * IMPORTANT NOTICE 2
+ * When modifying this code, change its version number according to the changes
+ * you made and modify the description to show who edited it and what version
+ * you contributed to.
+ *
+ * Example:
+ * John Smith edits the code and upgrades it to version 1.5.1
+ * The plugin description has to show this:
+ * - Last edit: MM-DD-YYYY by John Smith, version 1.5.1
  */
 (function() {  
 //-----------------------------------------------------------------------------
@@ -57,6 +137,36 @@ Window_Message.prototype.processNewLine = function(textState) {
 }; // Process New Line
 
 //-----------------------------------------------------------------------------
+// * Set Word Wrap
+//-----------------------------------------------------------------------------
+HRK.GYCFix.Window_Message.setWordWrap = Window_Base.prototype.setWordWrap;
+Window_Base.prototype.setWordWrap = function(text) {
+  text = HRK.GYCFix.Window_Message.setWordWrap.call(this, text);
+  console.log("Word Wrap attirbute: " + this._wordWrap);
+  if (this._wordWrap)
+    this._totalLines = 1;
+  return (text);
+}; // Set Word Wrap
+
+//-----------------------------------------------------------------------------
+// * Process Normal Character
+//-----------------------------------------------------------------------------
+HRK.GYCFix.Window_Message.processNormalCharacter = 
+    Window_Base.prototype.processNormalCharacter;
+Window_Base.prototype.processNormalCharacter = function(textState) {
+  if (Imported.YEP_MessageCore) {
+    if (this.checkWordWrap(textState)) {
+      this._totalLines += 1;
+      var newHeight = this.fittingHeight(this._totalLines);
+      this.height = Math.max(this.height, newHeight);
+      return this.processNewLine(textState);
+    }
+    Yanfly.Message.Window_Base_processNormalCharacter.call(this, textState);
+  } else
+    HRK.GYCFix.Window_Message.processNormalCharacter;
+}; // Process Normal Character
+
+//-----------------------------------------------------------------------------
 // * Face Offset
 //-----------------------------------------------------------------------------
 HRK.GYCFix.Window_Message.faceOffset = function() {
@@ -79,27 +189,33 @@ HRK.GYCFix.Window_Message.horzOffset = function() {
 }; // Horizontal Offset
 
 //-----------------------------------------------------------------------------
+// * Galv Message Styles Text Width
+//-----------------------------------------------------------------------------
+HRK.GYCFix.Window_Message.galvWidth = function() {
+  var minWidth = 0;
+  if (Imported.YEP_MessageCore)
+    return this.wordwrapWidth();
+  for (var i = 0; i < $gameMessage._texts.length; i++) {
+    var lineWidth = this.testWidthEx($gameMessage._texts[i]);
+    if (minWidth < lineWidth)
+      minWidth = lineWidth;
+  }
+  return minWidth;
+}; // Galv Message Styles Text Width
+
+//-----------------------------------------------------------------------------
 // * Caclulate Text Width
 //-----------------------------------------------------------------------------
 HRK.GYCFix.Window_Message.textWidth = function() {
   var minWidth = 0;
   var xO = HRK.GYCFix.Window_Message.horzOffset();
   var maxWidth = Graphics.boxWidth;
-  // Check if YEP_MessageCore is imported
   if (Imported.YEP_MessageCore)
     maxWidth = Math.min(Yanfly.Param.MSGDefaultWidth, maxWidth);
-  // Calculate Maximum Width for Text
-  if (Imported.Galv_MessageStyles) {
-    if (!Imported.YEP_MessageCore) {
-      for (var i = 0; i < $gameMessage._texts.length; i++) {
-        var lineWidth = this.testWidthEx($gameMessage._texts[i]);
-        if (minWidth < lineWidth)
-          minWidth = lineWidth;
-      }
-    }
-    else
-      minWidth = this.wordwrapWidth():
-  }
+  if (Imported.Galv_MessageStyles)
+    minWidth = HRK.GYCFix.Window_Message.galvWidth.call(this);
+  else
+    minWidth = maxWidth;
   return Math.min(maxWidth, minWidth + this.standardPadding() * 2 + xO);
 }; // Calculate Text Width
 
@@ -112,34 +228,37 @@ HRK.GYCFix.Window_Message.totTextWidth = function() {
 }; // Calculate Total Text Width
 
 //-----------------------------------------------------------------------------
+// * Minimum Lines Height
+//-----------------------------------------------------------------------------
+HRK.GYCFix.Window_Message.minLinesHeight = function() {
+  if ($gameMessage._faceName)
+    return (Window_Base._faceHeight + this.standardPadding() * 2);
+  return 0;
+}; // Minimum Lines Height
+
+//-----------------------------------------------------------------------------
 // * Change Window Dimensions
 //-----------------------------------------------------------------------------
 Window_Message.prototype.changeWindowDimensions = function() {
 	if (this.pTarget != null) {
-		// Calc max width and line height to get dimensions
-		var w = 10;
 		var h = 0;
     var textWidth = 0;
-
-		// Calc text width
+		var minFaceHeight = HRK.GYCFix.Window_Message.minLinesHeight.call(this);
 		this.resetFontSettings();
     textWidth = HRK.GYCFix.Window_Message.totTextWidth.call(this);
 		this.resetFontSettings();
-		this.width = Math.min(Graphics.boxWidth,w);
+		this.width = Math.min(Graphics.boxWidth,textWidth);
 		
-		// Calc minimum lines
-		var minFaceHeight = 0;
+		// Calculate minimum lines
 		if ($gameMessage._faceName) {
-			w += 15;
+			textWidth += 15;
 			if (Imported.Galv_MessageBusts) {
-				if ($gameMessage.bustPos == 1) w += Galv.MB.w;
+				if ($gameMessage.bustPos == 1) textWidth += Galv.MB.w;
 				minFaceHeight = 0;
-			} else {
-				minFaceHeight = Window_Base._faceHeight + this.standardPadding() * 2;
-			};
+			}
 		};
 		
-		// Calc text height
+		// Calculate text height
 		var textState = { index: 0 };
 		textState.text = this.convertEscapeCharacters($gameMessage.allText());
 		var allLineHeight = this.calcTextHeight(textState,true);
