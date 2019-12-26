@@ -14,6 +14,8 @@ This plugin, meant for RPG Maker MV, fixes compatibility issues between Galv's M
     * [Warning](#warning)
 * [License](#license)
   * [Important Notice](#important-notice)
+* [Credits](#credits)
+
 ----------
 ## Installation
 I recommend to install this plugin immediately after Galv's Message Styles plugin. I also recommend placing the latter right after YEP Message Core. Doing this will greatly decrease compatibility issues with other plugins.
@@ -47,7 +49,6 @@ As mentioned aboge, the engine automatically changes the message position when i
 If these conditions are satisfied, no strange issue should arise.
 
 ----------
-
 ## License
 This plugin is licensed under the GNU General Public License 3.0. This means that you can:
 
@@ -67,3 +68,7 @@ While this is not mandatory for non commercial games, I really appreciate if you
 
 ### IMPORTANT NOTICE
 You are free to distribute this plugin as long as you provide a link to my website with it. In case you downloaded this plugin from my website, provide a link to its download page instead of copy/pasting the code.
+
+----------
+## Credits
+Credits go to Galv and Yanfly for the original plugins. Do not forget to also add them to your game credits.
