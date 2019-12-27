@@ -54,7 +54,16 @@ If these conditions are satisfied, no strange issue should arise.
 If you are using Yanfly's Macros Extension Plugin together with this plugin, you have to be careful not to include any `\pop[X]` code in your macros. The reason is that Galv's Message Styles plugin looks for matches in the event itself (Game_Interpreter), before Yanfly's macros are converted. Any other macro can be used normally.
 
 ### Shaking Text
-If you are using SRD Shaking Text plugin, a compatibility option is included. Just add the small plugin with *below* at the end of its name to your plugin list and place it after SRD Shaking Text plugin. Be sure to place the original SRD Shaking Text plugin **above** the main compatibility fix plugin and to place the appendix (the one with *below* in its name) **after** SRD Shaking Text.
+If you are using SRD Shaking Text plugin, a compatibility option is included. Just add the appendix of this plugin to your plugin list and place it after SRD Shaking Text plugin. Be sure to place the original SRD Shaking Text plugin **below** the main compatibility fix plugin and to place the appendix **after** SRD Shaking Text.
+
+The correct plugin order is the follwing:
+1. YEP Message Core
+2. Galv Message Styles
+3. Heirukichi GalvYep Compatibility Fix
+4. SRD Shaking Text
+5. Heirukichi GalvYep Compatibility Fix Appendix
+
+Putting plugins between the main compatibility fix plugin and SRD Shaking Text plugin is possible as long as they are compatible with them.
 
 ----------
 ## License
