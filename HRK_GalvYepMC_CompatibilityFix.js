@@ -4,9 +4,9 @@
  * ---------------------------------------------------------------------------
  * HRK_GalvYepMC_CompatibilityFix.js
  * ---------------------------------------------------------------------------
- * @version 1.0.0
+ * @version 1.0.1
  * @author Heirukichi
- * - Last update: 12-21-2019 [MM-DD-YYYY]
+ * - Last update: 12-27-2019 [MM-DD-YYYY]
  * ---------------------------------------------------------------------------
  * REQUIRED FILES
  * ---------------------------------------------------------------------------
@@ -26,8 +26,8 @@ HRK.GYCFix = HRK.GYCFix || {};
 HRK.GYCFix.Window_Message = HRK.GYCFix.Window_Message || {};
 /*:
  * @plugindesc
- * Version 1.0.0
- * - Last update: 12-26-2019 [MM-DD-YYYY] by Heirukichi
+ * Version 1.0.1
+ * - Last update: 12-27-2019 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
  *
@@ -289,6 +289,7 @@ Window_Message.prototype.getVertTailPos = function() {
   this._tailSprite.scale.y = this._horzPosMod;
   this._tailSprite.y = (this.height + yPos) / 2 + 48;
   this._tailSprite.rotation = Math.PI / 2;
+  this._tailSprite.z = this.z + 1;
   this._tailSprite.opacity += 50;
 }; // Vertical Tail Position
 
