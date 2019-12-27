@@ -4,7 +4,7 @@
  * ---------------------------------------------------------------------------
  * HRK_GalvYepMC_CompatibilityFix.js
  * ---------------------------------------------------------------------------
- * @version 1.1.0
+ * @version 1.1.1
  * @author Heirukichi
  * - Last update: 12-27-2019 [MM-DD-YYYY]
  * ---------------------------------------------------------------------------
@@ -26,7 +26,7 @@ HRK.GYCFix = HRK.GYCFix || {};
 HRK.GYCFix.Window_Message = HRK.GYCFix.Window_Message || {};
 /*:
  * @plugindesc
- * Version 1.1.0
+ * Version 1.1.1
  * - Last update: 12-27-2019 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
@@ -147,6 +147,15 @@ HRK.GYCFix.Window_Message = HRK.GYCFix.Window_Message || {};
  * Anything bigger than that is better displayed above or below the speaking
  * character.
  *
+ * ----------------------------------------------------------------------------
+ * YANFLY'S MACROS AND THIS PLUGIN
+ * ----------------------------------------------------------------------------
+ * Yanfly's Macros Extension Plugin automatically converts short text codes
+ * into much longer ones to save time. When using Galv's Message Styles plugin,
+ * however, the \pop[X] code is evaluated first in the event itself. For this
+ * reason no \pop[X] code shall be included in any macro. Any other text code
+ * can be included normally.
+ *
  * ============================================================================
  * TERMS OF USE
  * ----------------------------------------------------------------------------
@@ -201,7 +210,7 @@ Window_Base.prototype.setWordWrap = function(text) {
   text = HRK.GYCFix.Window_Message.setWordWrap.call(this, text);
   if (this._wordWrap) {
     this._totalLines = 1;
-    this._extraHeight = this.standardPadding();
+    this._extraHeight = this.fittingHeight(1) - this.standardPadding() - 1;
   }
   return (text);
 }; // Set Word Wrap
@@ -245,7 +254,6 @@ HRK.GYCFix.Window_Message.processNormalCharacter =
 Window_Base.prototype.processNormalCharacter = function(textState) {
   if (Imported.YEP_MessageCore) {
     if (this.checkWordWrap(textState)) {
-      console.log("New line required!");
       this.adjustDynamicBoxHeight();
       return this.processNewLine(textState);
     }
@@ -338,7 +346,7 @@ Window_Message.prototype.updateVertPos = function() {
     posY = Math.min(maxY, galvPopY);
     this.tailPos = 0;
   } else if (posY < 0) {
-    posY = Math.max(this.ptarget.screenY() + 15, 0);
+    posY = Math.max(this.pTarget.screenY() + 15, 0);
     this.tailPos = 2;
   } else {
     this.tailPos = $gameMessage._positionType;
@@ -436,13 +444,6 @@ Window_Message.prototype.processNewLine = function(textState) {
 }; // Process New Line
 
 //-----------------------------------------------------------------------------
-// * Process Normal Character
-//-----------------------------------------------------------------------------
-Window_Message.prototype.processNormalCharacter = function(textState) {
-  Window_Base.prototype.processNormalCharacter.call(this, textState);
-}; // Process Normal Character
-
-//-----------------------------------------------------------------------------
 // * Face Offset
 //-----------------------------------------------------------------------------
 HRK.GYCFix.Window_Message.faceOffset = function() {
@@ -511,24 +512,6 @@ HRK.GYCFix.Window_Message.minLinesHeight = function() {
     return (Window_Base._faceHeight + this.standardPadding() * 2);
   return 0;
 }; // Minimum Lines Height
-
-//-----------------------------------------------------------------------------
-// * Create Shaking Character
-//-----------------------------------------------------------------------------
-HRK.GYCFix.Window_Message.createShakingChar =
-    Window_Message.prototype.createShakingCharacter;
-Window_Message.prototype.createShakingCharacter = function(textState, c, w, h){
-  console.log("Creating Shaking character..");
-  HRK.GYCFix.Window_Message.createShakingChar.call(this, textState, c, w, h);
-  var lastSpr = this._shakingSprites.length - 1;
-  console.log("Current Height: " + this._extraHeight);
-  if (this._shakingSprites[lastSpr].y > this._extraHeight) {
-    console.log("Changing Height... New Y: " + this._shakingSprites[lastSpr].y);
-    this._extraHeight = this._shakingSprites[lastSpr].y;
-    this.adjustDynamicBoxHeight();
-  } else
-    console.log("Sprite Y: " + this._shakingSprites[lastSpr].y);
-}; // Create Shaking Character
 
 //-----------------------------------------------------------------------------
 // * Change Window Dimensions
