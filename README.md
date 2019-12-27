@@ -12,6 +12,8 @@ This plugin, meant for RPG Maker MV, fixes compatibility issues between Galv's M
   * [Parameters Configuration](#parameters-configuration)
   * [Instructions](#instructions)
     * [Warning](#warning)
+    * [Macros](#macros)
+    * [Shaking Text](#shaking-text)
 * [License](#license)
   * [Important Notice](#important-notice)
 * [Credits](#credits)
@@ -47,6 +49,12 @@ As mentioned aboge, the engine automatically changes the message position when i
 * Messages that make use of either the *"Top"* or *"Bottom"* option should have a total height that is less than `(total height - biggest vertical offset - tile height) / 2`;
 * Messages that make use of the *"Middle"* option should have a total width that is less than `(total width - horizontal offset - tile width) / 2`.
 If these conditions are satisfied, no strange issue should arise.
+
+### Macros
+If you are using Yanfly's Macros Extension Plugin together with this plugin, you have to be careful not to include any `\pop[X]` code in your macros. The reason is that Galv's Message Styles plugin looks for matches in the event itself (Game_Interpreter), before Yanfly's macros are converted. Any other macro can be used normally.
+
+### Shaking Text
+If you are using SRD Shaking Text plugin, a compatibility option is included. Just add the small plugin with *below* at the end of its name to your plugin list and place it after SRD Shaking Text plugin. Be sure to place the original SRD Shaking Text plugin **above** the main compatibility fix plugin and to place the appendix (the one with *below* in its name) **after** SRD Shaking Text.
 
 ----------
 ## License
