@@ -4,7 +4,7 @@
  * ---------------------------------------------------------------------------
  * HRK_GalvYepMC_CompatibilityFix.js
  * ---------------------------------------------------------------------------
- * @version 1.0.1
+ * @version 1.1.0
  * @author Heirukichi
  * - Last update: 12-27-2019 [MM-DD-YYYY]
  * ---------------------------------------------------------------------------
@@ -26,7 +26,7 @@ HRK.GYCFix = HRK.GYCFix || {};
 HRK.GYCFix.Window_Message = HRK.GYCFix.Window_Message || {};
 /*:
  * @plugindesc
- * Version 1.0.1
+ * Version 1.1.0
  * - Last update: 12-27-2019 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
@@ -188,6 +188,71 @@ HRK.Param.VertDistBot = Number(HRK.Parameters['Bottom Offset']);
 HRK.Param.HorzDist = Number(HRK.Parameters['Horizontal Offset']);
 HRK.Param.MidTextPos = (HRK.Parameters['Middle Text Side'] == "true") ? 0 : -1;
 HRK.Param.MidTextMod = (HRK.Parameters['Middle Text Side'] == "true") ? 1 : -1;
+
+//=============================================================================
+// ** Window_Base
+//=============================================================================
+
+//-----------------------------------------------------------------------------
+// * Set Word Wrap
+//-----------------------------------------------------------------------------
+HRK.GYCFix.Window_Message.setWordWrap = Window_Base.prototype.setWordWrap;
+Window_Base.prototype.setWordWrap = function(text) {
+  text = HRK.GYCFix.Window_Message.setWordWrap.call(this, text);
+  if (this._wordWrap) {
+    this._totalLines = 1;
+    this._extraHeight = this.standardPadding();
+  }
+  return (text);
+}; // Set Word Wrap
+
+//-----------------------------------------------------------------------------
+// * Adjust Out Of Screen Box
+//-----------------------------------------------------------------------------
+Window_Base.prototype.adjustOutOfScreenBox = function() {
+  if (this.y + this.height > Graphics.boxHeight) {
+    $gameMessage._positionType = 0;
+    this.yOffset  = -(this.height + HRK.Param.VertDistTop);
+  } else if (this.y < 0) {
+    $gameMessage._positionType = 2;
+    this.yOffset = HRK.Param.VertDistBot;
+  }
+} // Adjust Out Of Screen Box
+
+//-----------------------------------------------------------------------------
+// * Adjust Dynamic Box Height
+//-----------------------------------------------------------------------------
+Window_Base.prototype.adjustDynamicBoxHeight = function() {
+  this._totalLines += 1;
+  var newHeight = this.fittingHeight(this._totalLines);
+  var dY = 0;
+  if (HRK.Param.DynamicHeight) {
+    dY = this.height - Math.max(this.height, newHeight);
+    this.height = Math.max(this.height, newHeight);
+  }
+  if ($gameMessage._positionType == 0)
+    this.yOffset += dY;
+  else if ($gameMessage._positionType == 1)
+    this.yOffset += dY / 2;
+  this.adjustOutOfScreenBox();
+}; // Adjust Dynamic Box Height
+
+//-----------------------------------------------------------------------------
+// * Process Normal Character
+//-----------------------------------------------------------------------------
+HRK.GYCFix.Window_Message.processNormalCharacter = 
+    Window_Base.prototype.processNormalCharacter;
+Window_Base.prototype.processNormalCharacter = function(textState) {
+  if (Imported.YEP_MessageCore) {
+    if (this.checkWordWrap(textState)) {
+      console.log("New line required!");
+      this.adjustDynamicBoxHeight();
+      return this.processNewLine(textState);
+    }
+    Yanfly.Message.Window_Base_processNormalCharacter.call(this, textState);
+  } else
+    HRK.GYCFix.Window_Message.processNormalCharacter;
+}; // Process Normal Character
 
 //=============================================================================
 // ** Window_Message
@@ -371,54 +436,10 @@ Window_Message.prototype.processNewLine = function(textState) {
 }; // Process New Line
 
 //-----------------------------------------------------------------------------
-// * Set Word Wrap
-//-----------------------------------------------------------------------------
-HRK.GYCFix.Window_Message.setWordWrap = Window_Base.prototype.setWordWrap;
-Window_Base.prototype.setWordWrap = function(text) {
-  text = HRK.GYCFix.Window_Message.setWordWrap.call(this, text);
-  if (this._wordWrap)
-    this._totalLines = 1;
-  return (text);
-}; // Set Word Wrap
-
-//-----------------------------------------------------------------------------
-// * Adjust Out Of Screen Box
-//-----------------------------------------------------------------------------
-Window_Base.prototype.adjustOutOfScreenBox = function() {
-  if (this.y + this.height > Graphics.boxHeight) {
-    $gameMessage._positionType = 0;
-    this.yOffset  = -(this.height + HRK.Param.VertDistTop);
-  } else if (this.y < 0) {
-    $gameMessage._positionType = 2;
-    this.yOffset = HRK.Param.VertDistBot;
-  }
-} // Adjust Out Of Screen Box
-
-//-----------------------------------------------------------------------------
 // * Process Normal Character
 //-----------------------------------------------------------------------------
-HRK.GYCFix.Window_Message.processNormalCharacter = 
-    Window_Base.prototype.processNormalCharacter;
-Window_Base.prototype.processNormalCharacter = function(textState) {
-  if (Imported.YEP_MessageCore) {
-    if (this.checkWordWrap(textState)) {
-      this._totalLines += 1;
-      var newHeight = this.fittingHeight(this._totalLines);
-      var dY = 0;
-      if (HRK.Param.DynamicHeight) {
-        dY = this.height - Math.max(this.height, newHeight);
-        this.height = Math.max(this.height, newHeight);
-      }
-      if ($gameMessage._positionType == 0)
-        this.yOffset += dY;
-      else if ($gameMessage._positionType == 1)
-        this.yOffset += dY / 2;
-      this.adjustOutOfScreenBox();
-      return this.processNewLine(textState);
-    }
-    Yanfly.Message.Window_Base_processNormalCharacter.call(this, textState);
-  } else
-    HRK.GYCFix.Window_Message.processNormalCharacter;
+Window_Message.prototype.processNormalCharacter = function(textState) {
+  Window_Base.prototype.processNormalCharacter.call(this, textState);
 }; // Process Normal Character
 
 //-----------------------------------------------------------------------------
@@ -490,6 +511,24 @@ HRK.GYCFix.Window_Message.minLinesHeight = function() {
     return (Window_Base._faceHeight + this.standardPadding() * 2);
   return 0;
 }; // Minimum Lines Height
+
+//-----------------------------------------------------------------------------
+// * Create Shaking Character
+//-----------------------------------------------------------------------------
+HRK.GYCFix.Window_Message.createShakingChar =
+    Window_Message.prototype.createShakingCharacter;
+Window_Message.prototype.createShakingCharacter = function(textState, c, w, h){
+  console.log("Creating Shaking character..");
+  HRK.GYCFix.Window_Message.createShakingChar.call(this, textState, c, w, h);
+  var lastSpr = this._shakingSprites.length - 1;
+  console.log("Current Height: " + this._extraHeight);
+  if (this._shakingSprites[lastSpr].y > this._extraHeight) {
+    console.log("Changing Height... New Y: " + this._shakingSprites[lastSpr].y);
+    this._extraHeight = this._shakingSprites[lastSpr].y;
+    this.adjustDynamicBoxHeight();
+  } else
+    console.log("Sprite Y: " + this._shakingSprites[lastSpr].y);
+}; // Create Shaking Character
 
 //-----------------------------------------------------------------------------
 // * Change Window Dimensions
