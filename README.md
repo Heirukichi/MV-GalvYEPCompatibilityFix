@@ -92,4 +92,4 @@ You are free to distribute this plugin as long as you provide a link to my websi
 
 ----------
 ## Credits
-Credits go to Galv and Yanfly for the original plugins. Do not forget to also add them to your game credits.
+Credits go to Galv, Yanfly and SumRndmDde for the original plugins. Do not forget to also add them to your game credits.
