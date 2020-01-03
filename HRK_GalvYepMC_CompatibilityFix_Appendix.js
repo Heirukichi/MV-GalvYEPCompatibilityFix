@@ -1,6 +1,6 @@
 /*:
  * @plugindesc
- * Version 1.0.0
+ * Version 1.0.1
  * - Last update: 01-03-2020 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
