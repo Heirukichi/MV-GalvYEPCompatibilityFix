@@ -370,38 +370,38 @@ Window_Message.prototype.getVertTailPos = function() {
 // * Update Text Box Position
 //-----------------------------------------------------------------------------
 Window_Message.prototype.updateTextBoxPosition = function() {
-	this.updateHorzPos();
-	this.updateVertPos();
-	if (this.openness > 200) {
-		if (this.tailPos == 1) { // MID
+  this.updateHorzPos();
+  this.updateVertPos();
+  if (this.openness > 200) {
+    if (this.tailPos == 1) { // MID
       this.getVertTailPos();
-		} else if (this.tailPos == 2) { // BOT
+    } else if (this.tailPos == 2) { // BOT
       this._tailSprite.rotation = 0;
-			this._tailSprite.y = 2;
-			this._tailSprite.scale.y = -1;
-			this._tailSprite.opacity += 50;
-		} else if (this.tailPos == 0) { // TOP
+      this._tailSprite.y = 2;
+      this._tailSprite.scale.y = -1;
+      this._tailSprite.opacity += 50;
+    } else if (this.tailPos == 0) { // TOP
       this._tailSprite.rotation = 0;
-			this._tailSprite.scale.y = 1;
-			this._tailSprite.y = this.height - 2;
-			this._tailSprite.opacity += 50;
-		}
-	}
+      this._tailSprite.scale.y = 1;
+      this._tailSprite.y = this.height - 2;
+      this._tailSprite.opacity += 50;
+    }
+  }
 }; // Update Text Box Position
 
 //-----------------------------------------------------------------------------
 // * Update Float Placement
 //-----------------------------------------------------------------------------
 Window_Message.prototype.updateFloatPlacement = function() {
-	if (!this._tailSprite) this.createWindowTail();
-	if (this.pTarget == null) {
-		this._tailSprite.opacity = 0;
-		return;
-	};
-	
-	if (this.openness < 255) this._tailSprite.opacity = 0;
-	this.updateTextBoxPosition();
-	this.updateFloats(this.x,this.width,this.y,this.height);
+  if (!this._tailSprite) this.createWindowTail();
+  if (this.pTarget == null) {
+    this._tailSprite.opacity = 0;
+    return;
+  };
+  
+  if (this.openness < 255) this._tailSprite.opacity = 0;
+  this.updateTextBoxPosition();
+  this.updateFloats(this.x,this.width,this.y,this.height);
 }; // Update Float Placement
 
 //-----------------------------------------------------------------------------
@@ -410,17 +410,17 @@ Window_Message.prototype.updateFloatPlacement = function() {
 HRK.GYCFix.Window_Message.setPSetOld = Window_Message.prototype.setPopSettings;
 Window_Message.prototype.setPopSettings = function() {
   this.xOffset = 0;
-	this.tailPos = $gameMessage._positionType;
-	switch ($gameMessage._positionType) {
+  this.tailPos = $gameMessage._positionType;
+  switch ($gameMessage._positionType) {
     case 0: // TOP
       this.yOffset = -(this.height + HRK.Param.VertDistTop);
       break;
-		case 1: // MIDDLE
-			this.yOffset = -(this.height / 2);
-			break;
-		case 2: // BOTTOM
-			this.yOffset = HRK.Param.VertDistBot;
-	}
+    case 1: // MIDDLE
+      this.yOffset = -(this.height / 2);
+      break;
+    case 2: // BOTTOM
+      this.yOffset = HRK.Param.VertDistBot;
+  }
 }; // Text Bubble Settings
 
 //-----------------------------------------------------------------------------
@@ -517,40 +517,40 @@ HRK.GYCFix.Window_Message.minLinesHeight = function() {
 // * Change Window Dimensions
 //-----------------------------------------------------------------------------
 Window_Message.prototype.changeWindowDimensions = function() {
-	if (this.pTarget != null) {
-		var h = 0;
+  if (this.pTarget != null) {
+    var h = 0;
     var textWidth = 0;
-		var minFaceHeight = HRK.GYCFix.Window_Message.minLinesHeight.call(this);
-		this.resetFontSettings();
+    var minFaceHeight = HRK.GYCFix.Window_Message.minLinesHeight.call(this);
+    this.resetFontSettings();
     textWidth = HRK.GYCFix.Window_Message.totTextWidth.call(this);
-		this.resetFontSettings();
-		this.width = Math.min(Graphics.boxWidth, textWidth);
-		
-		// Calculate minimum lines
-		if ($gameMessage._faceName) {
-			textWidth += 15;
-			if (Imported.Galv_MessageBusts) {
-				if ($gameMessage.bustPos == 1) textWidth += Galv.MB.w;
-				minFaceHeight = 0;
-			}
-		};
-		
-		// Calculate text height
-		var textState = { index: 0 };
-		textState.text = this.convertEscapeCharacters($gameMessage.allText());
-		var allLineHeight = this.calcTextHeight(textState,true);
-		var height = allLineHeight + this.standardPadding() * 2;
-		var minHeight = this.fittingHeight($gameMessage._texts.length);
-		this.height = Math.max(height,minHeight,minFaceHeight);
-		this.height += Galv.Mstyle.padding[0] + Galv.Mstyle.padding[2];
-		this.yOffset = -Galv.Mstyle.yOffset - this.height;
-		
-	} else {
-		this.yOffset = 0;
-		this.width = this.windowWidth();
-		this.height = Galv.Mstyle.Window_Message_windowHeight.call(this);
-		this.x = (Graphics.boxWidth - this.width) / 2;
-	};
+    this.resetFontSettings();
+    this.width = Math.min(Graphics.boxWidth, textWidth);
+    
+    // Calculate minimum lines
+    if ($gameMessage._faceName) {
+      textWidth += 15;
+      if (Imported.Galv_MessageBusts) {
+        if ($gameMessage.bustPos == 1) textWidth += Galv.MB.w;
+        minFaceHeight = 0;
+      }
+    };
+    
+    // Calculate text height
+    var textState = { index: 0 };
+    textState.text = this.convertEscapeCharacters($gameMessage.allText());
+    var allLineHeight = this.calcTextHeight(textState,true);
+    var height = allLineHeight + this.standardPadding() * 2;
+    var minHeight = this.fittingHeight($gameMessage._texts.length);
+    this.height = Math.max(height,minHeight,minFaceHeight);
+    this.height += Galv.Mstyle.padding[0] + Galv.Mstyle.padding[2];
+    this.yOffset = -Galv.Mstyle.yOffset - this.height;
+    
+  } else {
+    this.yOffset = 0;
+    this.width = this.windowWidth();
+    this.height = Galv.Mstyle.Window_Message_windowHeight.call(this);
+    this.x = (Graphics.boxWidth - this.width) / 2;
+  };
 }; // Change Window Dimensions
 
 //=============================================================================
