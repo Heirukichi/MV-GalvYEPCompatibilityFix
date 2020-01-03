@@ -4,9 +4,9 @@
  * ---------------------------------------------------------------------------
  * HRK_GalvYepMC_CompatibilityFix.js
  * ---------------------------------------------------------------------------
- * @version 1.1.1
+ * @version 1.1.2
  * @author Heirukichi
- * - Last update: 12-27-2019 [MM-DD-YYYY]
+ * - Last update: 01-03-2020 [MM-DD-YYYY]
  * ---------------------------------------------------------------------------
  * REQUIRED FILES
  * ---------------------------------------------------------------------------
@@ -26,8 +26,8 @@ HRK.GYCFix = HRK.GYCFix || {};
 HRK.GYCFix.Window_Message = HRK.GYCFix.Window_Message || {};
 /*:
  * @plugindesc
- * Version 1.1.1
- * - Last update: 12-27-2019 [MM-DD-YYYY] by Heirukichi
+ * Version 1.1.2
+ * - Last update: 01-03-2020 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
  *
@@ -210,7 +210,7 @@ Window_Base.prototype.setWordWrap = function(text) {
   text = HRK.GYCFix.Window_Message.setWordWrap.call(this, text);
   if (this._wordWrap) {
     this._totalLines = 1;
-    this._extraHeight = this.fittingHeight(1) - this.standardPadding() - 1;
+    this._extraHeight = this.fittingHeight(1) / 2 - this.standardPadding();
   }
   return (text);
 }; // Set Word Wrap
@@ -554,7 +554,7 @@ Window_Message.prototype.changeWindowDimensions = function() {
 }; // Change Window Dimensions
 
 //=============================================================================
- // * Window_NameBox
+// * Window_NameBox
 //=============================================================================
 
 //-----------------------------------------------------------------------------

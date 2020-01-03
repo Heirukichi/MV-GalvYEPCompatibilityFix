@@ -1,7 +1,7 @@
 /*:
  * @plugindesc
  * Version 1.0.0
- * - Last update: 12-27-2019 [MM-DD-YYYY] by Heirukichi
+ * - Last update: 01-03-2020 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
  *
@@ -12,6 +12,14 @@
  *
  * This plugin is under the same license as HRK_GalvYepMC_CompatibilityFix
  * plugin. Check it for more information.
+ *
+ * ----------------------------------------------------------------------------
+ * WARNING
+ * ----------------------------------------------------------------------------
+ * When adjusting your message window size, this plugin only allows you to move
+ * each character by half of its height, any movement that shifts the original
+ * position by more than that might result in the engine creating a new line in
+ * your message window to have enough space to move your text characters.
  */
 (function() {
 //-----------------------------------------------------------------------------
@@ -24,7 +32,7 @@ Window_Message.prototype.createShakingCharacter = function(textState, c, w, h){
   var lastSpr = this._shakingSprites.length - 1;
   if (this._shakingSprites[lastSpr].y > this._extraHeight) {
     var sprHeight = this._shakingSprites[lastSpr].height
-    this._extraHeight = this._shakingSprites[lastSpr].y + sprHeight - 1;
+    this._extraHeight = this._shakingSprites[lastSpr].y + sprHeight / 2;
     this.adjustDynamicBoxHeight();
   }
 }; // Create Shaking Character
