@@ -14,6 +14,7 @@ This plugin, meant for RPG Maker MV, fixes compatibility issues between Galv's M
     * [Warning](#warning)
     * [Macros](#macros)
     * [Shaking Text](#shaking-text)
+      * [Warning](#shaking-text-warning)
 * [License](#license)
   * [Important Notice](#important-notice)
 * [Credits](#credits)
@@ -64,6 +65,9 @@ The correct plugin order is the follwing:
 5. Heirukichi GalvYep Compatibility Fix Appendix
 
 Putting plugins between the main compatibility fix plugin and SRD Shaking Text plugin is possible as long as they are compatible with them.
+
+#### Shaking Text Warning
+When using the appendix to add compatibility with SRD Shaking Text plugin, be sure to set your characters shaking properly. Any shaking that shifts the character by more than 50% of its total height might result in the engine creating new lines of text to have enough space for the shaking effect. Keep this in mind whan changing SRD Shaking Text plugin parameters.
 
 ----------
 ## License
