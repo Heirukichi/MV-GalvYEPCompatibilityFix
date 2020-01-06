@@ -4,9 +4,9 @@
  * ---------------------------------------------------------------------------
  * HRK_GalvYepMC_CompatibilityFix.js
  * ---------------------------------------------------------------------------
- * @version 1.1.2
+ * @version 1.1.3
  * @author Heirukichi
- * - Last update: 01-03-2020 [MM-DD-YYYY]
+ * - Last update: 01-06-2020 [MM-DD-YYYY]
  * ---------------------------------------------------------------------------
  * REQUIRED FILES
  * ---------------------------------------------------------------------------
@@ -26,8 +26,8 @@ HRK.GYCFix = HRK.GYCFix || {};
 HRK.GYCFix.Window_Message = HRK.GYCFix.Window_Message || {};
 /*:
  * @plugindesc
- * Version 1.1.2
- * - Last update: 01-03-2020 [MM-DD-YYYY] by Heirukichi
+ * Version 1.1.3
+ * - Last update: 01-06-2020 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
  *
@@ -253,10 +253,8 @@ HRK.GYCFix.Window_Message.processNormalCharacter =
     Window_Base.prototype.processNormalCharacter;
 Window_Base.prototype.processNormalCharacter = function(textState) {
   if (Imported.YEP_MessageCore) {
-    if (this.checkWordWrap(textState)) {
-      this.adjustDynamicBoxHeight();
+    if (this.checkWordWrap(textState))
       return this.processNewLine(textState);
-    }
     Yanfly.Message.Window_Base_processNormalCharacter.call(this, textState);
   } else
     HRK.GYCFix.Window_Message.processNormalCharacter;
@@ -429,6 +427,8 @@ Window_Message.prototype.setPopSettings = function() {
 HRK.GYCFix.Window_Message.procNLOld = Window_Message.prototype.processNewLine;
 HRK.GYCFix.Window_Message.processNewLine = function(textState) {
   this._lineShowFast = false;
+  if (HRK.Param.DynamicHeight)
+    this.adjustDynamicBoxHeight();
   Window_Base.prototype.processNewLine.call(this, textState);
   if (this.needsNewPage(textState) && !Galv.Mstyle.testActive)
     this.startPause();

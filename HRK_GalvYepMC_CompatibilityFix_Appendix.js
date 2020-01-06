@@ -1,7 +1,7 @@
 /*:
  * @plugindesc
- * Version 1.0.1
- * - Last update: 01-03-2020 [MM-DD-YYYY] by Heirukichi
+ * Version 1.0.2
+ * - Last update: 01-06-2020 [MM-DD-YYYY] by Heirukichi
  *
  * @author Heirukichi - heirukichiworks.wordpress.com
  *
@@ -33,7 +33,6 @@ Window_Message.prototype.createShakingCharacter = function(textState, c, w, h){
   if (this._shakingSprites[lastSpr].y > this._extraHeight) {
     var sprHeight = this._shakingSprites[lastSpr].height
     this._extraHeight = this._shakingSprites[lastSpr].y + sprHeight / 2;
-    this.adjustDynamicBoxHeight();
   }
 }; // Create Shaking Character
 })();
